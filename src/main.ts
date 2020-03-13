@@ -1,12 +1,14 @@
 import 'phaser';
-import { MainScene } from './mainScene';
+import { MainScene } from './scenes/mainScene';
+import { BootScene } from './scenes/bootScene';
+import { LoadingScene } from './scenes/loadingScene';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
 
-    scene: [MainScene],
+    scene: [BootScene, LoadingScene, MainScene],
     scale: {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -23,24 +25,3 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 };
 
 export const game = new Phaser.Game(gameConfig);
-
-
-/*
-    var config = {
-        type: Phaser.AUTO,
-        width: 800,
-        height: 600,
-        physics: {
-            default: 'arcade',
-            arcade: {
-                gravity: { y: 200 }
-            }
-        },
-        scene: {
-            preload: preload,
-            create: create
-        }
-    };
-
-    var game = new Phaser.Game(config);
-*/
