@@ -20,6 +20,9 @@ export class LoadingScene extends Phaser.Scene {
     private progressBarY: number = 0;
 
     private nextScene: string;
+    // private packURL: string;
+    private packKey: string;
+    // private fileList: any;
 
     constructor() {
         super({
@@ -34,6 +37,14 @@ export class LoadingScene extends Phaser.Scene {
         if (params.scene) {
             console.log('Next scene should be ' + params.scene);
             this.nextScene = params.scene;
+        }
+        if (params.pack) {
+            if (params.pack.url) {
+                // this.packURL = params.pack.url;
+            }
+            if (params.pack.key) {
+                this.packKey = params.pack.key;
+            }
         }
     }
 
@@ -89,7 +100,14 @@ export class LoadingScene extends Phaser.Scene {
         });
         this.assetText.setOrigin(0.5, 0.5);
 
-        this.loadAll([]);
+        if (this.packKey) {
+            let url = 'config/' + this.packKey + '.json'; //FIXME: TODO: fix config global path or separate method etc.
+
+            console.log('Pack provided!', this.packKey, url);
+
+            this.load.pack(this.packKey, url);
+        }
+        // this.loadAll([]);
 
         this.load.on(Phaser.Loader.Events.PROGRESS, function (value: number) {
             console.log(value);
@@ -113,9 +131,9 @@ export class LoadingScene extends Phaser.Scene {
         for (var i = 0; i < 300; i++) {
             this.load.image('logo' + i, 'assets/sprites/phaser3-logo.png');
         }
-        this.load.image('sky', 'assets/skies/space3.png');
-        this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-        this.load.image('red', 'assets/particles/red.png');
+        // this.load.image('sky', 'assets/skies/space3.png');
+        // this.load.image('logo', 'assets/sprites/phaser3-logo.png');
+        // this.load.image('red', 'assets/particles/red.png');
     }
 
     updateFileText(file: Phaser.Loader.File, percentComplete: number) {

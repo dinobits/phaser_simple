@@ -1,0 +1,21 @@
+{
+    "scenes": [
+        {
+            "key": "boot",
+            "file": "bootScene.ts",
+            "class": "BootScene"
+        },
+        {
+            "key": "loading",
+            "class": "LoadingScene"
+        },
+        {
+            "key": "main",
+            "class": "mainScene"
+        },
+        {
+            "key": "menu",
+            "class": "MainMenuScene"
+        }
+    ]
+}
