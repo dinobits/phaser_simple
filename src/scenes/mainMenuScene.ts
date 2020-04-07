@@ -1,32 +1,20 @@
-import { Scene } from "phaser";
+import { MenuConfig } from "../interfaces/menuConfig";
+import { MenuButton, MenuButtonType, MenuButtonAction } from "../interfaces/menuButton";
 
 export class MainMenuScene extends Phaser.Scene {
+    readonly menuConfigKey = 'mainMenu';
+    private config: MenuConfig;
+
     constructor() {
-        console.log('Constructing MainMenuScene');
         super({
             key: "MainMenuScene"
         });
+        console.log('Constructing MainMenuScene');
     }
 
     init(data: any) {
-
-    }
-
-    createSceneButton(image: string, sceneName: string) {
-        console.log('created scene button');
-        let button = this.add.image(0, 0, image).setInteractive();
-        button.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
-            this.scene.start(sceneName);
-        });
-        return button;
-    }
-
-    createSceneText(text: string, sceneName: string) {
-
-    }
-
-    changeScene(sceneName: string) {
-        this.scene.start(sceneName);
+        this.config = this.cache.json.get(this.menuConfigKey);
+        console.log(this.config);
     }
 
     create() {
@@ -38,42 +26,89 @@ export class MainMenuScene extends Phaser.Scene {
         let centerX = width / 2;
         let centerY = height / 2;
 
+        let prefix = this.config.prefix ?? '';
 
-        let playButton = this.createSceneButton('logo', 'MainScene');
-        playButton.x = width / 2;
-        playButton.y = height / 2 - 100;
+        let buttonCount = this.config.buttons.length;
 
-        let settingsButton = this.add.text(centerX, centerY, 'Settings').setInteractive();
-        settingsButton.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
-            this.scene.start('BootScene');
-        });
+        let buttonMaxHeight = height / buttonCount;
+        let posY = buttonMaxHeight / 2;
 
-        let quitButton = this.add.text(centerX, centerY + 100, 'Quit').setInteractive();
-        quitButton.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
-            // this.scene.start(sceneName);
-            this.sys.game.destroy(true);   
-        });
-
-        // this.scene.backgroundColor = '#182d3b';
-
-        // background = this.add.tileSprite(0, 0, 800, 600, 'background');
-
-        // let button = this.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
-
-        // button.onInputOver.add(over, this);
-        // button.onInputOut.add(out, this);
-        // button.onInputUp.add(up, this);
+        for (let i = 0; i < this.config.buttons.length; i++) {
+            const button = this.config.buttons[i];
+            this.createButton(button, centerX, posY);
+            posY += buttonMaxHeight;
+        }
     }
 
-    // up() {
-    //     console.log('button up', arguments);
-    // }
+    private readonly style = {
+        font: "bold 32px Arial",
+        align: "center",
+        fill: "#fff",
+    };
 
-    // over() {
-    //     console.log('button over');
-    // }
+    createButton(menuButton: MenuButton, x: integer, y: integer): Phaser.GameObjects.GameObject | undefined {
+        console.log('Creating button: ', menuButton, x, y);
+        let button: Phaser.GameObjects.GameObject | undefined = undefined;
+        switch (menuButton.type) {
+            case MenuButtonType.text:
+                console.log('Creating text button');
+                button = this.add.text(x, y, menuButton.text ?? 'no-text', this.style)
+                    .setOrigin(0.5, 0.5)
+                    .setInteractive();
+                break;
+            case MenuButtonType.image:
+                console.log('Creating image button');
+                button = this.add.image(x, y, menuButton.imageKey ?? 'no-image').setInteractive();
+                break;
+            default:
+                return;
+        }
+        switch (menuButton.action) {
+            case MenuButtonAction.scene:
+                button.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
+                    console.log('Changing scene on click: ' + menuButton.scene);
+                    this.scene.start(menuButton.scene ?? 'no-scene');
+                });
+                break;
+            case MenuButtonAction.method:
+                button.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
+                    let methodName: string = menuButton.method ?? 'button';
+                    console.log('Method name to call is ' + methodName);
+                    // this[ methodName ]();
+                    // if(this.methodName) {
+                    // method exists in the component
+                    // this[methodName](menuButton); // call it
+                    // }
+                });
+                break;
+            case MenuButtonAction.quit:
+                button.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
+                    this.sys.game.destroy(true);
+                });
+                break;
+            default:
+                button.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
+                    console.log('No action assigned to this button');
+                });
+                break;
+        }
+        return button;
+    }
 
-    // out() {
-    //     console.log('button out');
-    // }
+    // let playButton = this.createSceneButton('logo', 'MainScene');
+    // playButton.x = width / 2;
+    // playButton.y = height / 2 - 100;
+
+    // let settingsButton = this.add.text(centerX, centerY, 'Settings').setInteractive();
+    // settingsButton.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
+    //     this.scene.start('BootScene');
+    // });
+
+    // let quitButton = this.add.text(centerX, centerY + 100, 'Quit').setInteractive();
+    // quitButton.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
+    //     // this.scene.start(sceneName);
+    //     this.sys.game.destroy(true);
+    // });
+
+
 }

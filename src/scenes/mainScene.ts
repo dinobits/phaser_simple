@@ -1,4 +1,6 @@
 export class MainScene extends Phaser.Scene {
+    escKey: Phaser.Input.Keyboard.Key;
+
     constructor() {
         super({
             key: "MainScene"
@@ -29,6 +31,14 @@ export class MainScene extends Phaser.Scene {
         logo.setCollideWorldBounds(true);
 
         emitter.startFollow(logo);
+
+        this.escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC, true, false);
+        this.escKey.on(Phaser.Input.Keyboard.Events.DOWN, (ev: any) => {
+            console.log('Esc key clicked down');
+            this.scene.start('MainMenuScene');
+        });
     }
-    update(time: any): void { }
+    update(time: any): void {
+        // if (this.escKey.)
+    }
 };

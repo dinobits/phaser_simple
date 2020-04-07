@@ -18,6 +18,12 @@
                 "key": "red",
                 "url": "assets/particles/red.png",
                 "overwrite": false
+            },
+            {
+                "type": "json",
+                "key": "mainMenu",
+                "url": "config/main-menu.json",
+                "overwrite": false
             }
         ]
     }

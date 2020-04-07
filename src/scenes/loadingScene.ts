@@ -131,9 +131,6 @@ export class LoadingScene extends Phaser.Scene {
         for (var i = 0; i < 300; i++) {
             this.load.image('logo' + i, 'assets/sprites/phaser3-logo.png');
         }
-        // this.load.image('sky', 'assets/skies/space3.png');
-        // this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-        // this.load.image('red', 'assets/particles/red.png');
     }
 
     updateFileText(file: Phaser.Loader.File, percentComplete: number) {

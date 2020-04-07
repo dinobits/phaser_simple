@@ -1,0 +1,25 @@
+{
+    "prefix": "btn_",
+    "buttons": [
+        {
+            "key": "game",
+            "type": "image",
+            "action": "scene",
+            "scene": "MainScene",
+            "imageKey": "logo"
+        },
+        {
+            "key": "load",
+            "type": "text",
+            "action": "scene",
+            "scene": "load",
+            "text": "Load Level"
+        },
+        {
+            "key": "quit",
+            "type": "text",
+            "action": "quit",
+            "text": "Quit"
+        }
+    ]
+}

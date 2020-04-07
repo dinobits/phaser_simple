@@ -57,11 +57,18 @@ export class BootScene extends Phaser.Scene {
         logo.setOrigin(0.5, 0.5);
 
         this.input.on(Phaser.Input.Events.POINTER_UP, this.nextScene, this);
+
+        this.scene.start('LoadingScene', {
+            scene: 'MainMenuScene',
+            pack: {
+                key: 'main'
+            }
+        });
     }
 
     nextScene(pointer: Phaser.Input.Pointer, currentlyOver: Array<Phaser.GameObjects.GameObject>) {
         this.scene.start('LoadingScene', {
-            scene: 'MainMenuScene',
+            scene: 'MainMenuScene', // todo: pack and scene can have same name or close to it
             pack: {
                 key: 'main'
             }
