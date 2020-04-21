@@ -12,6 +12,8 @@ export interface MenuButton {
     type: MenuButtonType;
     action: MenuButtonAction
     scene?: string;
+    requireLoad?: string;
+    loadPack?: string;
     method?: string;
     text?: string;
     imageKey?: string;

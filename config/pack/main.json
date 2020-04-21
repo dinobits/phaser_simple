@@ -1,0 +1,30 @@
+{
+    "main": {
+        "files": [
+            {
+                "type": "image",
+                "key": "sky",
+                "url": "assets/skies/space3.png",
+                "overwrite": false
+            },
+            {
+                "type": "image",
+                "key": "logo",
+                "url": "assets/sprites/phaser3-logo.png",
+                "overwrite": false
+            },
+            {
+                "type": "image",
+                "key": "red",
+                "url": "assets/particles/red.png",
+                "overwrite": false
+            },
+            {
+                "type": "json",
+                "key": "mainMenu",
+                "url": "config/main-menu.json",
+                "overwrite": false
+            }
+        ]
+    }
+}

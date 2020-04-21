@@ -3,6 +3,7 @@ import { MenuButton, MenuButtonType, MenuButtonAction } from "../interfaces/menu
 
 export class MainMenuScene extends Phaser.Scene {
     readonly menuConfigKey = 'mainMenu';
+    readonly loadingScene = 'LoadingScene';
     private config: MenuConfig;
 
     constructor() {
@@ -67,7 +68,19 @@ export class MainMenuScene extends Phaser.Scene {
             case MenuButtonAction.scene:
                 button.on(Phaser.Input.Events.POINTER_UP, (ev: any) => {
                     console.log('Changing scene on click: ' + menuButton.scene);
-                    this.scene.start(menuButton.scene ?? 'no-scene');
+                    if (menuButton.requireLoad) {
+                        let scene = menuButton.scene ?? 'no-scene';
+                        let pack = menuButton.loadPack ?? menuButton.key;
+
+                        this.scene.start(this.loadingScene, {
+                            scene: scene,
+                            pack: {
+                                key: pack
+                            }
+                        });
+                    } else {
+                        this.scene.start(menuButton.scene ?? 'no-scene');
+                    }
                 });
                 break;
             case MenuButtonAction.method:

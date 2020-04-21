@@ -101,7 +101,7 @@ export class LoadingScene extends Phaser.Scene {
         this.assetText.setOrigin(0.5, 0.5);
 
         if (this.packKey) {
-            let url = 'config/' + this.packKey + '.json'; //FIXME: TODO: fix config global path or separate method etc.
+            let url = 'config/pack/' + this.packKey + '.json'; //FIXME: TODO: fix config global path or separate method etc.
 
             console.log('Pack provided!', this.packKey, url);
 
@@ -115,7 +115,7 @@ export class LoadingScene extends Phaser.Scene {
         this.load.on(Phaser.Loader.Events.PROGRESS, this.updateLoader, this);
 
         this.load.on(Phaser.Loader.Events.FILE_PROGRESS, function (file: Phaser.Loader.File, percentComplete: number) {
-            console.log(file.src);
+            console.log(file.key, file.src);
         });
         this.load.on(Phaser.Loader.Events.FILE_PROGRESS, this.updateFileText, this);
 
