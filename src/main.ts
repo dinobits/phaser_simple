@@ -4,13 +4,14 @@ import { BootScene } from './scenes/bootScene';
 import { LoadingScene } from './scenes/loadingScene';
 import { MainMenuScene } from './scenes/mainMenuScene';
 import { SnakeScene } from './scenes/snakeScene';
+import { SnakeScene01 } from './scenes/snakeScene0.1';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
 
-    scene: [BootScene, LoadingScene, MainScene, MainMenuScene, SnakeScene],
+    scene: [BootScene, LoadingScene, MainScene, MainMenuScene, SnakeScene, SnakeScene01],
     scale: {
         width: window.innerWidth,
         height: window.innerHeight,

@@ -1,0 +1,18 @@
+{
+    "snake": {
+        "files": [
+            {
+                "type": "image",
+                "key": "body",
+                "url": "assets/games/snake/body.png",
+                "overwrite": false
+            },
+            {
+                "type": "image",
+                "key": "food",
+                "url": "assets/games/snake/food.png",
+                "overwrite": false
+            }
+        ]
+    }
+}

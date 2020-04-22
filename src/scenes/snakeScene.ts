@@ -1,6 +1,4 @@
 import { GameObjects } from "phaser";
-// import { Snake } from "../games/snake";
-// import { Body } from "../games/body";
 
 interface CursorKeys {
     up: Phaser.Input.Keyboard.Key;
@@ -121,7 +119,7 @@ export class SnakeScene extends Phaser.Scene {
         if (this.direction.y > 0 && y < 0) {
             return; // can change directio from down to up
         }
-        if (this.direction.y > 0 && y < 0) {
+        if (this.direction.y < 0 && y > 0) {
             return; // can change directio from up to down
         }
 
