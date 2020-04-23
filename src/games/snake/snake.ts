@@ -16,6 +16,7 @@ export class Snake {
     private distance: number;
 
     private parts: Part[] = [];
+    private path: Phaser.Structs.List<Phaser.Math.Vector2>;
 
     constructor(settings: Settings) {
         this.scene = settings.scene;
@@ -53,6 +54,18 @@ export class Snake {
         if (size > 1) {
             this.parts.push(this.createPart(position.x, position.y, this.tailTexture));
         }
+
+        this.path = new Phaser.Structs.List(Phaser.Math.Vector2);
+        // let temp = new Phaser.Math.Vector2(800,200);
+        // this.path.add(new Phaser.Math.Vector2(960,365));
+        // this.path.add(new Phaser.Math.Vector2(100,300));
+        // this.path.add(temp);
+        // this.path.add(new Phaser.Math.Vector2(300,500));
+
+        // let index = this.path.getIndex(temp);
+        // let newNextPosition = this.path.getAt(index + 1);
+        console.log(this.path.getAll());
+        // this.path.
     }
 
     action(action: Action) {
@@ -67,8 +80,11 @@ export class Snake {
     }
 
     private changeDirection(direction: Phaser.Math.Vector2) {
-        console.log(direction);
+        // console.log(direction);
 
+        if (direction.x == this.nextDirection.x && direction.y == this.nextDirection.y) {
+            return;
+        }
         if (Math.abs(direction.x) == Math.abs(direction.y)) {
             // snake can not move diagonally
             return;
@@ -87,8 +103,11 @@ export class Snake {
         }
 
         this.nextDirection = direction; // TODO: check this for not messing with old direction
-        this.parts[0].lastChangePosition = this.parts[0].body.position.clone();
-        console.log(this.parts[0].lastChangePosition);
+        this.path.add(this.getPosition(this.parts[0]));
+    }
+
+    private getPosition(object: Phaser.Physics.Arcade.Image): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2(object.x, object.y);
     }
 
     grow(count: number = 1): void {
@@ -118,13 +137,67 @@ export class Snake {
         this.bodyUpdate();
     }
 
+    private bodyUpdate() {
+        for (let i = 1; i < this.parts.length; i++) {
+            const part = this.parts[i];
+            const prev = this.parts[i - 1];
+            if (
+                part.body.velocity.x == 0 && part.body.velocity.y == 0
+                && !part.moving
+            ) {
+                if (this.getPosition(part).distanceSq(this.getPosition(prev)) > this.distance) {
+                    part.nextChangePosition = this.path.first;
+                    part.moving = true;
+
+                    let direction = new Phaser.Math.Vector2(
+                        part.nextChangePosition.x - part.x,
+                        part.nextChangePosition.y - part.y
+                    ).normalize();
+                    part.setVelocity(direction.x * this.speed, direction.y * this.speed);
+                }
+            } else {
+                if (part.nextChangePosition) {
+                    let distance = part.nextChangePosition.distanceSq(this.getPosition(part));
+                    if (distance < 4) {
+                        let index = this.path.getIndex(part.nextChangePosition);
+                        let newNextPosition = this.path.getAt(index + 1);
+                        part.lastChangePosition = part.nextChangePosition;
+                        part.nextChangePosition = newNextPosition;
+                        console.log('next possition', part.nextChangePosition, newNextPosition);
+
+                        if (part.nextChangePosition) {
+                            let direction = new Phaser.Math.Vector2(
+                                part.nextChangePosition.x - part.x,
+                                part.nextChangePosition.y - part.y
+                            ).normalize();
+                            part.setVelocity(direction.x * this.speed, direction.y * this.speed);
+                        }
+                    }
+                    // TODO: here additional chack can be added if part missed the position (went past it)
+                } else {
+                    if (this.path.last != part.lastChangePosition) {
+                        console.log('new postioint occured');
+                        part.nextChangePosition = this.path.last;
+
+                        let direction = new Phaser.Math.Vector2(
+                            part.nextChangePosition.x - part.x,
+                            part.nextChangePosition.y - part.y
+                        ).normalize();
+                        part.setVelocity(direction.x * this.speed, direction.y * this.speed);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Not optimized snake body update variant, where each body element stays the same (not moving head pointer)
      */
-    private bodyUpdate() {
+    private bodyUpdate1() {
         for (let i = this.parts.length - 1; i > 0; i--) {
             const part = this.parts[i];
             const next = this.parts[i - 1];
+
             if (
                 next.lastChangePosition
                 && part.body.position.distance(next.lastChangePosition) < 1

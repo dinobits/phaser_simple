@@ -58,7 +58,7 @@ export class SnakeScene01 extends Phaser.Scene {
             "right": Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        console.log(this.cursors);
+        // console.log(this.cursors);
     }
 
     /**
