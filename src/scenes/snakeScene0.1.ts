@@ -16,9 +16,11 @@ interface Point {
 
 export class SnakeScene01 extends Phaser.Scene {
     escKey: Phaser.Input.Keyboard.Key;
+    spaceKey: Phaser.Input.Keyboard.Key;
     cursors: CursorKeys;
 
     snake: Snake;
+    food: Phaser.Physics.Arcade.Group;
 
     constructor() {
         super({
@@ -36,9 +38,10 @@ export class SnakeScene01 extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('black');
 
         let settings: Settings = {
-            size: 30,
+            size: 1,
             body: 'body',
             head: 'food',
+            tail: 'food',
 
             scene: this
         };
@@ -58,7 +61,30 @@ export class SnakeScene01 extends Phaser.Scene {
             "right": Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        // console.log(this.cursors);
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.spaceKey.on(Phaser.Input.Keyboard.Events.DOWN, (ev: any) => {
+            console.log('Esc key clicked down');
+            this.snake.grow();
+        });
+
+        this.physics.world.setBounds(0, 0, this.cameras.main.width, this.cameras.main.height);
+        this.food = this.physics.add.group();
+        this.physics.add.overlap(this.food, this.snake.group, (food) => { this.pickUpFood(<Phaser.Physics.Arcade.Image>food) });
+
+        this.spawnFood();
+    }
+
+    spawnFood() {
+        let f = this.physics.add.image(400,300, 'food');
+        this.food.add(f);
+    }
+
+    pickUpFood(food: Phaser.Physics.Arcade.Image) {
+        this.snake.grow();
+        console.log('pickup', food);
+        // let f = this.food.getFirst();
+        // f.x = 500;
+        // f.y = 500;
     }
 
     /**
@@ -68,6 +94,8 @@ export class SnakeScene01 extends Phaser.Scene {
      * @param delta The delta time in ms since the last frame. This is a smoothed and capped value based on the FPS rate.
      */
     update(time: number, delta: number): void {
+        this.physics.world.wrap(this.snake.group);
+
         if (this.cursors.up.isDown) {
             this.snake.action(Action.up);
         }
@@ -80,6 +108,7 @@ export class SnakeScene01 extends Phaser.Scene {
         if (this.cursors.right.isDown) {
             this.snake.action(Action.right);
         }
+
         this.snake.update();
     }
 }

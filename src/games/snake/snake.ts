@@ -13,9 +13,11 @@ export class Snake {
     private direction: Phaser.Math.Vector2;
     private nextDirection: Phaser.Math.Vector2; // Should not matter on greater speeds
     private speed: number;
-    private distance: number;
+    private maxDistanceSq: number;
+    private minDistanceSq: number;
 
     private parts: Part[] = [];
+    public group: Phaser.Physics.Arcade.Group;
 
     constructor(settings: Settings) {
         this.scene = settings.scene;
@@ -28,19 +30,26 @@ export class Snake {
         this.nextDirection = Phaser.Math.Vector2.ZERO;
 
         this.speed = settings.speed ?? 100;
-        this.distance = settings.distance ?? 280;
+        this.maxDistanceSq = settings.maxDistance ? settings.maxDistance * settings.maxDistance : 256;
+        this.minDistanceSq = settings.minDistance ? settings.minDistance * settings.minDistance : 64;
 
         let size = settings.size ?? 3;
         let position = settings.position ?? this.scene.cameras.main.midPoint;
 
+        this.group = this.scene.physics.add.group();
+
+        // this.group
+        // this.scene.physics.add.collider(this.group, this.group)
+
         this.init(size, position);
-        console.log(position);
-        console.log(this.parts);
     }
 
     private createPart(x: number, y: number, texture: string): Part {
-        return this.scene.physics.add.image(x, y, texture);
-        // new Part(this.scene, position.x, position.y, this.headTexture)
+        let part = this.scene.physics.add.image(x, y, texture);
+        this.group.add(part);
+        // part.setCollideWorldBounds(true);
+        
+        return part;
     }
 
     private init(size: number, position: Phaser.Math.Vector2) {
@@ -53,6 +62,10 @@ export class Snake {
         if (size > 1) {
             this.parts.push(this.createPart(position.x, position.y, this.tailTexture));
         }
+    }
+
+    getBody(): Phaser.Physics.Arcade.Group {
+        return this.group;
     }
 
     action(action: Action) {
@@ -102,15 +115,15 @@ export class Snake {
         }
         let tail: Part | null = null;
         if (this.parts.length > 1) {
-            tail = this.parts.pop() ?? new Part(this.scene, this.parts[0].x, this.parts[0].y, this.tailTexture);
+            tail = this.parts.pop() ?? this.createPart(this.parts[0].x, this.parts[0].y, this.tailTexture);
         }
         for (let i = 0; i < count - 1; i++) {
-            this.parts.push(new Part(this.scene, this.parts[0].x, this.parts[0].y, this.bodyTexture));
+            this.parts.push(this.createPart(this.parts[0].x, this.parts[0].y, this.bodyTexture));
         }
         if (tail) {
-            this.parts.push(new Part(this.scene, this.parts[0].x, this.parts[0].y, this.bodyTexture));
+            this.parts.push(this.createPart(this.parts[0].x, this.parts[0].y, this.bodyTexture));
         } else {
-            tail = new Part(this.scene, this.parts[0].x, this.parts[0].y, this.tailTexture);
+            tail = this.createPart(this.parts[0].x, this.parts[0].y, this.tailTexture);
         }
         this.parts.push(tail);
     }
@@ -123,18 +136,24 @@ export class Snake {
         this.bodyUpdate();
     }
 
-    bodyUpdate() {
-        for (let i = this.parts.length -1; i > 0; i--) {
+    private bodyUpdate() {
+        for (let i = this.parts.length - 1; i > 0; i--) {
             const part = this.parts[i];
-            const next = this.parts[i-1];
+            const next = this.parts[i - 1];
             const distanceSq = next.body.position.distanceSq(part.body.position);
-            if (distanceSq > this.distance) {
-                const direction = new Phaser.Math.Vector2(
-                    next.body.x - part.body.x,
-                    next.body.y - part.body.y
-                ).normalize();
-                part.setVelocity(direction.x * this.speed, direction.y * this.speed);
-            } else if (distanceSq < 100) {
+            const teleported = false;
+            if (distanceSq > this.maxDistanceSq) {
+                if (false) {
+                    //here must be some check if head or any other body part teleported
+                } else {
+                    const direction = new Phaser.Math.Vector2(
+                        next.body.x - part.body.x,
+                        next.body.y - part.body.y
+                    ).normalize();
+                    part.setVelocity(direction.x * this.speed, direction.y * this.speed);
+                }
+
+            } else if (distanceSq < this.minDistanceSq) {
                 part.setVelocity(0, 0);
             }
         }

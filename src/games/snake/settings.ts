@@ -5,9 +5,13 @@ export interface Settings {
     direction?: Math.Vector2;
     size?: number;
     /**
-     * Disnace between centers of the body parts
+     * Minimal distance between centers of the body parts after which Body part will stop moving
      */
-    distance?: number;
+    minDistance?: number;
+    /**
+     * Maximal distance between centers of the body parts after which Body part will start moving after previous element
+     */
+    maxDistance?: number;
 
     speed?: number;
 
