@@ -41,7 +41,7 @@ export class SnakeScene01 extends Phaser.Scene {
             size: 1,
             body: 'body',
             head: 'food',
-            tail: 'food',
+            // tail: 'food',
 
             scene: this
         };
@@ -69,22 +69,27 @@ export class SnakeScene01 extends Phaser.Scene {
 
         this.physics.world.setBounds(0, 0, this.cameras.main.width, this.cameras.main.height);
         this.food = this.physics.add.group();
-        this.physics.add.overlap(this.food, this.snake.group, (food) => { this.pickUpFood(<Phaser.Physics.Arcade.Image>food) });
+        console.log(this.food);
+        // this.physics.
 
         this.spawnFood();
     }
-
+    private f:Phaser.Physics.Arcade.Image;
     spawnFood() {
         let f = this.physics.add.image(400,300, 'food');
         this.food.add(f);
+        this.physics.add.overlap(f, this.snake.group, (food, snake) => { this.pickUpFood(food) } );
     }
 
-    pickUpFood(food: Phaser.Physics.Arcade.Image) {
+    pickUpFood(food: GameObjects.GameObject) {
         this.snake.grow();
         console.log('pickup', food);
-        // let f = this.food.getFirst();
-        // f.x = 500;
-        // f.y = 500;
+        this.food.killAndHide(food);
+        if (food instanceof Phaser.Physics.Arcade.Image) {
+            food.body.checkCollision.none = true;
+        } else {
+            console.log('Object not Phaser.Physics.Arcade.Image! Something wrong');
+        }
     }
 
     /**
