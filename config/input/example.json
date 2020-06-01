@@ -1,0 +1,15 @@
+[
+    {
+        "key": "ctrl+alt+n",
+        "command": "explorer.newFile"
+    },
+    {
+        "key": "ctrl+alt+f",
+        "command": "explorer.newFolder"
+    },
+    {
+        "key": "ctrl+k ctrl+c",
+        "command": "editor.action.addCommentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    }
+]
