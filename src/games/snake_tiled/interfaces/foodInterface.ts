@@ -1,7 +1,7 @@
 import { GameObjects } from "phaser";
-import { TiledPoint } from "../TiledPoint";
+import { TiledPointInterface } from "./tiledPointInterface";
 
 export interface FoodInterface {
     image: GameObjects.Image;
-    location: TiledPoint;
+    location: TiledPointInterface;
 }

@@ -16,6 +16,10 @@
         {
             "key": "menu",
             "class": "MainMenuScene"
+        },
+        {
+            "key": "menu",
+            "class": "TestScene"
         }
     ]
 }

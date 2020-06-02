@@ -9,6 +9,14 @@
             "imageKey": "logo"
         },
         {
+            "key": "test",
+            "type": "text",
+            "action": "scene",
+            "scene": "TestScene",
+            "requireLoad": true,
+            "text": "TEST"
+        },
+        {
             "key": "snake01",
             "type": "text",
             "action": "scene",

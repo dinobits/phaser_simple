@@ -1,18 +1,12 @@
 import { GameObjects, Game, Tilemaps } from "phaser";
-import { TiledPoint } from "./TiledPoint";
+import { TiledPointInterface } from "./interfaces/tiledPointInterface";
 import { BasicFood } from "./basicFood";
+import { FoodInterface } from "./interfaces/foodInterface";
 
-
-
-interface FoodInterface {
-    image: GameObjects.Image;
-    location: TiledPoint;
-}
-
-export interface Settings {
+export interface SettingsInterface {
     maxAllowedFoodCount: number;
     foodImage: GameObjects.Image;
-    maxSize: TiledPoint | null;
+    maxSize: TiledPointInterface | null;
 }
 
 export class FoodManager {
@@ -22,16 +16,20 @@ export class FoodManager {
     private maxAllowedFoodCount = 10;
     private foodImage: GameObjects.Image;
 
-    private maxSize: TiledPoint;
+    private maxSize: TiledPointInterface;
 
-    constructor(config: Settings) {
+    constructor(config: SettingsInterface) {
         this.maxAllowedFoodCount = config.maxAllowedFoodCount;
-        this.maxSize = config.maxSize ?? <TiledPoint>{ x: 10, y: 10 };
+        this.maxSize = config.maxSize ?? <TiledPointInterface>{ x: 10, y: 10 };
 
         console.log('Constructing SnakeScene');
     }
 
-    createFood(location: TiledPoint, image: any = null): FoodInterface {
+    getFoodList(): FoodInterface[] {
+        return this.foods;
+    }
+
+    createFood(location: TiledPointInterface, image: any = null): FoodInterface {
         let food = new BasicFood(location, image ?? this.foodImage);
         this.foods.push(food);
         return food;
@@ -45,20 +43,24 @@ export class FoodManager {
      * 
      * @returns If food was consumed returns true, false otherwise
      */
-    consumeFood(location: TiledPoint, spawnNew: boolean = true): boolean {
+    consumeFood(location: TiledPointInterface, spawnNew: boolean = true): boolean {
         let food = this.findFoodByLocation(location);
         if (!food) {
             return false;
         }
         this.removeFood(food);
 
-        let newLocation: TiledPoint = <TiledPoint>{
+        this.spawnRandomFood();
+
+        return false;
+    }
+
+    spawnRandomFood() {
+        let newLocation: TiledPointInterface = <TiledPointInterface>{
             x: Phaser.Math.Between(0, this.maxSize.x),
             y: Phaser.Math.Between(0, this.maxSize.y)
         };
-        this.createFood(newLocation);
-
-        return false;
+        return this.createFood(newLocation);
     }
 
     /**
@@ -75,7 +77,7 @@ export class FoodManager {
         return false;
     }
 
-    findFoodByLocation(location: TiledPoint) {
+    findFoodByLocation(location: TiledPointInterface) {
         for (let index = 0; index < this.foods.length; index++) {
             const element = this.foods[index];
             if (element.location.x == location.x
@@ -89,7 +91,7 @@ export class FoodManager {
     /**
      * Check if food exists by given tiled map coordinates
      */
-    checkFood(location: TiledPoint): boolean {
+    checkFood(location: TiledPointInterface): boolean {
         if (this.findFoodByLocation(location)) {
             return true;
         }
